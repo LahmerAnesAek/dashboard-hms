@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم دردشات رحوي والمراسلات — القائمة 05 بلدية الرحوية</title>
+  <link rel="icon" type="image/webp" href="assets/images/ai.webp">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    :root {
+      --dash-bg: #f4f6f9;
+      --dash-card: #ffffff;
+      --dash-border: #e2e8f0;
+      --dash-text: #0f172a;
+      --dash-muted: #64748b;
+      --dash-green: #008751;
+      --dash-green-soft: rgba(0, 135, 81, 0.08);
+      --dash-orange: #ff5500;
+      --dash-orange-soft: rgba(255, 85, 0, 0.1);
+      --dash-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+    }
+
+    body.dashboard-body {
+      background-color: var(--dash-bg);
+      color: var(--dash-text);
+      font-family: var(--font-body), system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* شريط الرأس العلوي */
+    .dash-topbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--dash-border);
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .dash-topbar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .dash-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .dash-brand-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--dash-green-soft);
+      border: 1.5px solid var(--dash-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .dash-brand-avatar img {
+      width: 40px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .dash-brand-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--dash-text);
+      line-height: 1.25;
+    }
+
+    .dash-brand-sub {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--dash-muted);
+    }
+
+    .dash-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+      }
+    }
+
+    .btn-dash {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.95rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--dash-border);
+      background: #ffffff;
+      color: var(--dash-text);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-dash:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    .btn-dash-primary {
+      background: var(--dash-green);
+      color: #ffffff;
+      border-color: var(--dash-green);
+    }
+
+    .btn-dash-primary:hover {
+      background: #007043;
+      border-color: #007043;
+      color: #ffffff;
+    }
+
+    .btn-dash-orange {
+      background: var(--dash-orange);
+      color: #ffffff;
+      border-color: var(--dash-orange);
+    }
+
+    .btn-dash-orange:hover {
+      background: #e04b00;
+      color: #ffffff;
+    }
+
+    .btn-dash .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* الحاوية الرئيسية */
+    .dash-container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 1.5rem auto;
+      padding: 0 1.25rem;
+      box-sizing: border-box;
+      flex: 1;
+    }
+
+    /* شبكة بطاقات الإحصائيات (KPIs) */
+    .dash-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dash-kpi-card {
+      background: var(--dash-card);
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid var(--dash-border);
+      box-shadow: var(--dash-shadow);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dash-kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      background: var(--dash-border);
+    }
+
+    .dash-kpi-card.kpi-green::before {
+      background: var(--dash-green);
+    }
+
+    .dash-kpi-card.kpi-orange::before {
+      background: var(--dash-orange);
+    }
+
+    .dash-kpi-card.kpi-blue::before {
+      background: #0284c7;
+    }
+
+    .dash-kpi-card.kpi-purple::before {
+      background: #8b5cf6;
+    }
+
+    .dash-kpi-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .kpi-green .dash-kpi-icon-wrap {
+      background: var(--dash-green-soft);
+      color: var(--dash-green);
+    }
+
+    .kpi-orange .dash-kpi-icon-wrap {
+      background: var(--dash-orange-soft);
+      color: var(--dash-orange);
+    }
+
+    .kpi-blue .dash-kpi-icon-wrap {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+
+    .kpi-purple .dash-kpi-icon-wrap {
+      background: #f3e8ff;
+      color: #8b5cf6;
+    }
+
+    .dash-kpi-icon-wrap .icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .dash-kpi-info {
+      flex: 1;
+    }
+
+    .dash-kpi-label {
+      margin: 0 0 0.25rem 0;
+      font-size: 0.85rem;
+      color: var(--dash-muted);
+      font-weight: 600;
+    }
+
+    .dash-kpi-num {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--dash-text);
+      line-height: 1.1;
+      font-family: var(--font-num), sans-serif;
+    }
+
+    .dash-kpi-sub {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.76rem;
+      color: var(--dash-muted);
+    }
+
+    /* شريط التحكم والبحث */
+    .dash-controls-card {
+      background: var(--dash-card);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--dash-border);
+      box-shadow: var(--dash-shadow);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .dash-search-box {
+      position: relative;
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .dash-search-box .icon {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--dash-muted);
+      pointer-events: none;
+    }
+
+    .dash-search-input {
+      width: 100%;
+      padding: 0.6rem 2.4rem 0.6rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--dash-border);
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .dash-search-input:focus {
+      border-color: var(--dash-green);
+      box-shadow: 0 0 0 3px rgba(0, 135, 81, 0.12);
+    }
+
+    .dash-filter-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .dash-tab-btn {
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: #f1f5f9;
+      color: var(--dash-muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .dash-tab-btn:hover {
+      background: #e2e8f0;
+      color: var(--dash-text);
+    }
+
+    .dash-tab-btn.active {
+      background: var(--dash-green);
+      color: #ffffff;
+    }
+
+    /* جدول البيانات */
+    .dash-table-card {
+      background: var(--dash-card);
+      border-radius: 12px;
+      border: 1px solid var(--dash-border);
+      box-shadow: var(--dash-shadow);
+      overflow: hidden;
+    }
+
+    .dash-table-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--dash-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .dash-table-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dash-table-count {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: #f1f5f9;
+      font-size: 0.78rem;
+      color: var(--dash-muted);
+      font-weight: 600;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.86rem;
+    }
+
+    .dash-table th {
+      background: #f8fafc;
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      color: var(--dash-muted);
+      border-bottom: 1px solid var(--dash-border);
+      white-space: nowrap;
+      font-size: 0.8rem;
+      letter-spacing: 0.2px;
+    }
+
+    .dash-table td {
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+      color: var(--dash-text);
+    }
+
+    .dash-table tbody tr:hover {
+      background-color: #fafbfc;
+    }
+
+    .cell-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-num), sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--dash-green);
+      direction: ltr;
+    }
+
+    .phone-tag-lead {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .phone-tag-lead:hover {
+      background: #d1fae5;
+      transform: scale(1.02);
+    }
+
+    .phone-btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      color: #475569;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .phone-btn-action:hover {
+      background: var(--dash-green);
+      color: #ffffff;
+    }
+
+    .phone-btn-action.action-wa:hover {
+      background: #25d366;
+      color: #ffffff;
+    }
+
+    .cell-msg {
+      max-width: 340px;
+      line-height: 1.45;
+    }
+
+    .cell-msg-user {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.35rem;
+    }
+
+    .cell-msg-bot {
+      font-size: 0.8rem;
+      color: #475569;
+      background: #f8fafc;
+      padding: 0.45rem 0.65rem;
+      border-radius: 6px;
+      border-right: 3px solid var(--dash-green);
+    }
+
+    .badge-msg-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: 0.74rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .cell-device {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-size: 0.78rem;
+      color: var(--dash-muted);
+    }
+
+    .device-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .device-badge .icon {
+      width: 14px;
+      height: 14px;
+      color: var(--dash-muted);
+    }
+
+    .cell-geo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+    }
+
+    .geo-city {
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .geo-city .icon {
+      width: 13px;
+      height: 13px;
+      color: var(--dash-orange);
+    }
+
+    /* أوسمة شبكات الاتصال الجزائرية بدقة تامة */
+    .badge-isp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    .badge-isp.isp-mobilis {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-isp.isp-ooredoo {
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+    }
+
+    .badge-isp.isp-djezzy {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #ffedd5;
+    }
+
+    .badge-isp.isp-at {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #dbeafe;
+    }
+
+    .badge-isp.isp-default {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+
+    .geo-ip {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .badge-section {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      background: #f1f5f9;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .cell-time {
+      font-size: 0.78rem;
+      color: var(--dash-muted);
+      white-space: nowrap;
+      line-height: 1.35;
+    }
+
+    .cell-time-rel {
+      font-weight: 700;
+      color: #1e293b;
+      display: block;
+    }
+
+    .btn-session-view {
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--dash-border);
+      background: #ffffff;
+      color: #475569;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-session-view:hover {
+      background: var(--dash-green);
+      border-color: var(--dash-green);
+      color: #ffffff;
+    }
+
+    /* شاشات فارغة وحالات التحميل */
+    .dash-empty-state {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--dash-muted);
+    }
+
+    .dash-empty-state .icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 0.75rem;
+      color: #cbd5e1;
+    }
+
+    .dash-spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #e2e8f0;
+      border-top-color: var(--dash-green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* نافذة منبثقة لعرض الجلسة الكاملة */
+    .session-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .session-modal-overlay.active {
+      display: flex;
+    }
+
+    .session-modal {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      animation: modal-in 0.25s ease-out;
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: scale(0.96) translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .session-modal-header {
+      padding: 1.15rem 1.25rem;
+      border-bottom: 1px solid var(--dash-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .session-modal-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: #f8fafc;
+    }
+
+    .chat-bubble-thread {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-width: 82%;
+    }
+
+    .chat-bubble-thread.user {
+      align-self: flex-start;
+    }
+
+    .chat-bubble-thread.assistant {
+      align-self: flex-end;
+    }
+
+    .chat-bubble-thread-content {
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .chat-bubble-thread.user .chat-bubble-thread-content {
+      background: #ffffff;
+      border: 1px solid var(--dash-border);
+      border-bottom-right-radius: 2px;
+      color: #0f172a;
+    }
+
+    .chat-bubble-thread.assistant .chat-bubble-thread-content {
+      background: var(--dash-green);
+      color: #ffffff;
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-bubble-thread-meta {
+      font-size: 0.7rem;
+      color: var(--dash-muted);
+      padding: 0 0.35rem;
+    }
+
+    .session-modal-footer {
+      padding: 0.85rem 1.25rem;
+      border-top: 1px solid var(--dash-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+    }
+
+    /* تذييل الصفحة */
+    .dash-footer {
+      background: #ffffff;
+      border-top: 1px solid var(--dash-border);
+      padding: 1.25rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--dash-muted);
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .dash-topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .dash-topbar-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .dash-controls-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+
+<body class="dashboard-body">
+
+  <!-- الشريط العلوي -->
+  <header class="dash-topbar">
+    <div class="dash-topbar-inner">
+      <div class="dash-brand">
+
+        <div>
+          <h1 class="dash-brand-title font-swash">لوحة تحكم محادثات رحوي وتفاعل المواطنين</h1>
+          <p class="dash-brand-sub">قائمة حركة مجتمع السلم — بلدية الرحوية </p>
+        </div>
+      </div>
+
+      <div class="dash-topbar-actions">
+
+        <button class="btn-dash btn-dash-orange" id="btnExportCsv" title="تصدير إلى إكسل">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>تصدير Excel/CSV</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- المحتوى الرئيسي للوحة -->
+  <main class="dash-container">
+
+    <!-- شبكة المؤشرات الإحصائية السريعة -->
+    <section class="dash-kpi-grid">
+      <!-- إجمالي المحادثات (الأشخاص) -->
+      <div class="dash-kpi-card kpi-green">
+        <div class="dash-kpi-icon-wrap">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <div class="dash-kpi-info">
+          <p class="dash-kpi-label">المحادثات الفريدة (الأشخاص)</p>
+          <h3 class="dash-kpi-num" id="kpiTotalConversations">0</h3>
+          <p class="dash-kpi-sub" id="kpiTotalRawMsgs">0 رسالة متبادلة إجمالاً</p>
+        </div>
+      </div>
+
+      <!-- أرقام الهواتف الملتقطة -->
+      <div class="dash-kpi-card kpi-orange">
+        <div class="dash-kpi-icon-wrap">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+            </path>
+          </svg>
+        </div>
+        <div class="dash-kpi-info">
+          <p class="dash-kpi-label">جهات الاتصال (أرقام الهواتف)</p>
+          <h3 class="dash-kpi-num" id="kpiTotalLeads">0</h3>
+          <p class="dash-kpi-sub">مواطن ترك هاتفه لمتابعة انشغاله</p>
+        </div>
+      </div>
+
+      <!-- شبكات الاتصال الأكثر استخداماً -->
+      <div class="dash-kpi-card kpi-blue">
+        <div class="dash-kpi-icon-wrap">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </div>
+        <div class="dash-kpi-info">
+          <p class="dash-kpi-label">الشبكة الأكثر تصفحاً</p>
+          <h3 class="dash-kpi-num" style="font-size:1.25rem;" id="kpiTopCarrier">جاري الرصد...</h3>
+          <p class="dash-kpi-sub" id="kpiTopCity">المنطقة الأكثر تفاعلا</p>
+        </div>
+      </div>
+
+      <!-- نسبة الهواتف -->
+      <div class="dash-kpi-card kpi-purple">
+        <div class="dash-kpi-icon-wrap">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+        </div>
+        <div class="dash-kpi-info">
+          <p class="dash-kpi-label">تصفح الهواتف الذكية</p>
+          <h3 class="dash-kpi-num" id="kpiMobilePct">0%</h3>
+          <p class="dash-kpi-sub">نسبة مستخدمي الهواتف مقارنة بالحواسيب</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- شريط التصفية والبحث السريع -->
+    <section class="dash-controls-card">
+      <div class="dash-search-box">
+        <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="dashSearchInput" class="dash-search-input"
+          placeholder="بحث في محادثات المواطنين، أرقام الهواتف، الأسماء، المدن، أو شبكات الاتصال...">
+      </div>
+    </section>
+
+    <!-- جدول السجلات والمحادثات (مجمعة لكل شخص) -->
+    <section class="dash-table-card">
+      <div class="dash-table-header">
+        <h2 class="dash-table-title font-swash">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width:20px;height:20px;color:var(--dash-green)">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>سجل محادثات المواطنين (محادثة موحدة لكل شخص)</span>
+        </h2>
+        <span class="dash-table-count" id="tableFilterCount">0 محادثة</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="dash-table" id="chatsTable">
+          <thead>
+            <tr>
+              <th style="width:3rem; text-align:center;">#</th>
+              <th>آخر تفاعل</th>
+              <th>المواطن / رقم الهاتف</th>
+              <th>آخر انشغال وسؤال مطروح</th>
+              <th>آخر رد من رحوي</th>
+              <th>الجهاز والمتصفح</th>
+              <th>الموقع والشبكة بدقة</th>
+              <th>القسم المتصفح</th>
+              <th>المحادثة الكاملة</th>
+            </tr>
+          </thead>
+          <tbody id="chatsTableBody">
+            <tr>
+              <td colspan="9" class="dash-empty-state">
+                <div class="dash-spinner"></div>
+                <p style="margin: 0.5rem 0 0 0;">جاري تحميل المحادثات من Supabase...</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- نافذة منبثقة لاستعراض الجلسة الكاملة -->
+  <div class="session-modal-overlay" id="sessionModalOverlay">
+    <div class="session-modal">
+      <div class="session-modal-header">
+        <div>
+          <h3 style="margin:0; font-size:1.05rem; font-weight:800;" id="sessionModalTitle">المحادثة الكاملة للشخص</h3>
+          <p style="margin:0.2rem 0 0 0; font-size:0.78rem; color:var(--dash-muted);" id="sessionModalSub">تفاصيل الجلسة
+          </p>
+        </div>
+        <button class="btn-dash" id="sessionModalClose" style="padding:0.35rem 0.6rem;">
+          <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width:18px;height:18px;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="session-modal-body" id="sessionModalMessages">
+        <!-- يتم ملؤها ديناميكياً -->
+      </div>
+
+      <div class="session-modal-footer">
+        <span style="font-size:0.8rem; color:var(--dash-muted);" id="sessionModalFooterInfo"></span>
+        <button class="btn-dash btn-dash-primary" id="sessionModalCloseBtn">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- التذييل -->
+  <footer class="dash-footer">
+    <p>القائمة رقم 05 لحركة مجتمع السلم — بلدية الرحوية، ولاية تيارت | انتخابات المجالس الشعبية البلدية 28 نوفمبر 2026
+    </p>
+  </footer>
+
+  <!-- كود تشغيل اللوحة والاتصال بـ Supabase -->
+  <script>
+    const SUPABASE_CONFIG = {
+      endpoint: 'https://ntcstxvcsrfxybmxgntv.supabase.co/rest/v1/rahoui_chats',
+      apiKey: 'sb_publishable_SPdROwhg_BkLaJF2UrHO1w_jGUZNq2X'
+    };
+
+    let allRawRecords = [];
+    let groupedConversations = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // 1. تجميع السجلات حسب كل شخص / معرف زائر (One Person = One Chat)
+    function groupRecordsBySession(records) {
+      const map = new Map();
+
+      for (const r of records) {
+        // مفتاح الربط: معرف الزائر الدائم أو رقم الهاتف إن توفر لضمان جمع محادثات نفس الشخص معاً
+        const key = r.session_id || (r.phone_number ? 'phone_' + r.phone_number : 'sess_' + r.id);
+
+        if (!map.has(key)) {
+          map.set(key, {
+            session_id: key,
+            created_at: r.created_at,
+            first_at: r.created_at,
+            phone_number: r.phone_number || null,
+            user_name: r.user_name || null,
+            device_type: r.device_type || 'Desktop',
+            os_name: r.os_name || '',
+            browser_name: r.browser_name || '',
+            screen_res: r.screen_res || '',
+            user_agent: r.user_agent || '',
+            city: r.city || '',
+            region: r.region || '',
+            country: r.country || '',
+            isp: r.isp || '',
+            ip_address: r.ip_address || '',
+            connection_type: r.connection_type || '',
+            current_section: r.current_section || 'hero',
+            is_lead: Boolean(r.is_lead || r.phone_number),
+            visitCount: 0,
+            messages: []
+          });
+        }
+
+        const conv = map.get(key);
+
+        // تمييز الزيارات (user_message=null) عن الدردشات الحقيقية
+        const isVisit = (r.user_message === null || r.user_message === undefined || r.user_message === '');
+        if (isVisit) {
+          conv.visitCount += 1;
+        } else {
+          conv.messages.push(r);
+        }
+
+        // التقاط أي بيانات ظهرت في سجلات لاحقة (كالهاتف والاسم والموقع الدقيق)
+        if (!conv.phone_number && r.phone_number) {
+          conv.phone_number = r.phone_number;
+          conv.is_lead = true;
+        }
+        if (!conv.user_name && r.user_name) conv.user_name = r.user_name;
+        if (!conv.city && r.city) conv.city = r.city;
+        if (!conv.isp && r.isp) conv.isp = r.isp;
+        if (!conv.ip_address && r.ip_address) conv.ip_address = r.ip_address;
+        if (!conv.connection_type && r.connection_type) conv.connection_type = r.connection_type;
+        if (!conv.user_agent && r.user_agent) conv.user_agent = r.user_agent;
+
+        // تحديث آخر وقت تفاعل
+        if (new Date(r.created_at) > new Date(conv.created_at)) {
+          conv.created_at = r.created_at;
+          conv.current_section = r.current_section || conv.current_section;
+        }
+        if (new Date(r.created_at) < new Date(conv.first_at)) {
+          conv.first_at = r.created_at;
+        }
+      }
+
+      // فرز الرسائل داخل كل محادثة ترتيباً زمنياً تصاعدياً
+      const list = Array.from(map.values()).map(conv => {
+        conv.messages.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        conv.latestMessage = conv.messages[conv.messages.length - 1] || null;
+        conv.firstMessage = conv.messages[0] || null;
+        conv.messagesCount = conv.messages.length;
+        return conv;
+      });
+
+      // فرز المحادثات ككل بحيث تظهر أحدث محادثة نشطة في الأعلى
+      list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      return list;
+    }
+
+    // 2. جلب البيانات من Supabase REST API
+    async function fetchChatsData() {
+      const btnRefresh = document.getElementById('btnRefresh');
+      if (btnRefresh) btnRefresh.classList.add('is-loading');
+
+      try {
+        const url = `${SUPABASE_CONFIG.endpoint}?order=created_at.desc&limit=800`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'apikey': SUPABASE_CONFIG.apiKey,
+            'Authorization': 'Bearer ' + SUPABASE_CONFIG.apiKey,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!res.ok) throw new Error('فشل جلب البيانات من الخادم');
+
+        const data = await res.json();
+        allRawRecords = Array.isArray(data) ? data : [];
+        groupedConversations = groupRecordsBySession(allRawRecords);
+
+        updateKPIs(groupedConversations, allRawRecords);
+        renderTable();
+      } catch (err) {
+        console.error('Fetch error:', err);
+        const tbody = document.getElementById('chatsTableBody');
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9" class="dash-empty-state">
+                <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p style="font-weight:700; color:#dc2626;">تعذر جلب البيانات من قاعدة البيانات حالياً.</p>
+                <p style="font-size:0.8rem;">يرجى التحقق من الاتصال بالإنترنت والضغط على زر "تحديث فوري".</p>
+              </td>
+            </tr>
+          `;
+        }
+      } finally {
+        if (btnRefresh) btnRefresh.classList.remove('is-loading');
+      }
+    }
+
+    // 3. تحديث بطاقات الإحصائيات (KPIs) بناءً على الأشخاص والمحادثات الموحدة
+    function updateKPIs(conversations, rawRecords) {
+      const totalConversations = conversations.length;
+      const totalRawMsgs = rawRecords.length;
+      const leads = conversations.filter(c => c.phone_number || c.is_lead);
+      const mobileCount = conversations.filter(c => c.device_type === 'Mobile').length;
+      const mobilePct = totalConversations > 0 ? Math.round((mobileCount / totalConversations) * 100) : 0;
+
+      // رصد الشبكة الأكثر استخداماً
+      const carrierCounts = {};
+      conversations.forEach(c => {
+        const isp = c.isp || 'أخرى';
+        carrierCounts[isp] = (carrierCounts[isp] || 0) + 1;
+      });
+      let topCarrier = 'موبيليس / أوريدو';
+      let maxCount = 0;
+      for (const [k, v] of Object.entries(carrierCounts)) {
+        if (v > maxCount) {
+          maxCount = v;
+          topCarrier = k;
+        }
+      }
+
+      document.getElementById('kpiTotalConversations').textContent = totalConversations.toLocaleString();
+      document.getElementById('kpiTotalRawMsgs').textContent = `${totalRawMsgs.toLocaleString()} رسالة متبادلة إجمالاً`;
+      document.getElementById('kpiTotalLeads').textContent = leads.length.toLocaleString();
+      document.getElementById('kpiTopCarrier').textContent = topCarrier;
+      document.getElementById('kpiMobilePct').textContent = `${mobilePct}%`;
+    }
+
+    // 4. تصنيف وسام الشبكة الجزائرية بلون خاص
+    function getIspBadgeHtml(isp) {
+      const s = (isp || '').toLowerCase();
+      let badgeClass = 'isp-default';
+      let cleanTitle = isp || 'شبكة محلية';
+
+      if (s.includes('mobilis')) {
+        badgeClass = 'isp-mobilis';
+        cleanTitle = 'موبيليس (Mobilis)';
+      } else if (s.includes('ooredoo') || s.includes('wataniya')) {
+        badgeClass = 'isp-ooredoo';
+        cleanTitle = 'أوريدو (Ooredoo)';
+      } else if (s.includes('djezzy') || s.includes('ota') || s.includes('optimum')) {
+        badgeClass = 'isp-djezzy';
+        cleanTitle = 'جازي (Djezzy)';
+      } else if (s.includes('telecom')) {
+        badgeClass = 'isp-at';
+        cleanTitle = 'اتصالات الجزائر (4G/ADSL)';
+      }
+
+      return `<span class="badge-isp ${badgeClass}">${cleanTitle}</span>`;
+    }
+
+    // 5. تصفية وعرض الجدول الموحد (كل شخص في سطر واحد)
+    function renderTable() {
+      const tbody = document.getElementById('chatsTableBody');
+      if (!tbody) return;
+
+      const q = searchQuery.toLowerCase().trim();
+      const filtered = groupedConversations.filter(c => {
+        // تصفية التبويبات
+        if (currentFilter === 'leads' && !c.phone_number && !c.is_lead) return false;
+        if (currentFilter === 'forms') {
+          const hasForm = c.messages.some(m => (m.user_message || '').includes('[استمارة'));
+          if (!hasForm) return false;
+        }
+        if (currentFilter === 'today') {
+          const recDate = new Date(c.created_at).toDateString();
+          const todayDate = new Date().toDateString();
+          if (recDate !== todayDate) return false;
+        }
+
+        // تصفية البحث النصي عبر كافة رسائل الشخص
+        if (q) {
+          const matchPhone = (c.phone_number || '').includes(q);
+          const matchName = (c.user_name || '').toLowerCase().includes(q);
+          const matchCity = (c.city || '').toLowerCase().includes(q) || (c.region || '').toLowerCase().includes(q);
+          const matchIsp = (c.isp || '').toLowerCase().includes(q);
+          const matchDevice = (c.device_type || '').toLowerCase().includes(q) || (c.browser_name || '').toLowerCase().includes(q);
+          const matchMsgs = c.messages.some(m =>
+            (m.user_message || '').toLowerCase().includes(q) ||
+            (m.bot_response || '').toLowerCase().includes(q)
+          );
+          if (!matchPhone && !matchName && !matchCity && !matchIsp && !matchDevice && !matchMsgs) return false;
+        }
+
+        return true;
+      });
+
+      document.getElementById('tableFilterCount').textContent = `عرض ${filtered.length} محادثة من أصل ${groupedConversations.length}`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="dash-empty-state">
+              <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <p style="font-weight:700;">لا توجد محادثات تطابق معايير البحث الحالية.</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((c, index) => {
+        const lastMsg = c.latestMessage;
+        const dateObj = new Date(c.created_at);
+        const timeStr = dateObj.toLocaleTimeString('ar-DZ', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = dateObj.toLocaleDateString('ar-DZ', { day: 'numeric', month: 'short' });
+        const relTime = getRelativeTime(dateObj);
+
+        // تنسيق جهة الاتصال والهاتف
+        let contactHtml = '<span style="color:var(--dash-muted); font-size:0.78rem;">زائر غير مسجل</span>';
+        if (c.phone_number) {
+          const cleanPhone = c.phone_number.replace(/\D/g, '');
+          const waPhone = cleanPhone.startsWith('0') ? '213' + cleanPhone.slice(1) : cleanPhone;
+          contactHtml = `
+            <div>
+              <a href="tel:${c.phone_number}" class="phone-tag-lead" title="اتصال هاتفي مباشر">
+                <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span dir="ltr">${c.phone_number}</span>
+              </a>
+              <div style="display:flex; align-items:center; gap:0.4rem; margin-top:0.35rem;">
+                <a href="https://wa.me/${waPhone}" target="_blank" rel="noopener" class="phone-btn-action action-wa" title="فتح محادثة واتساب">
+                  <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </a>
+                ${c.user_name ? `<span style="font-size:0.75rem; color:#0f172a; font-weight:700;">${escapeHtml(c.user_name)}</span>` : ''}
+              </div>
+            </div>
+          `;
+        } else if (c.user_name) {
+          contactHtml = `<span style="font-size:0.8rem; font-weight:700; color:#0f172a;">${escapeHtml(c.user_name)}</span>`;
+        }
+
+        // وسام عدد الزيارات والرسائل
+        const visitBadge = c.visitCount > 0
+          ? `<span class="badge-msg-count" style="background:rgba(0,135,81,0.08);color:#008751;border-color:rgba(0,135,81,0.2);">
+               <svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+               ${c.visitCount} ${c.visitCount === 1 ? 'زيارة' : 'زيارات'}
+             </span>` : '';
+        const msgBadgeHtml = c.messagesCount > 0
+          ? `<span class="badge-msg-count">${c.messagesCount} ${c.messagesCount === 1 ? 'رسالة' : 'رسائل'}</span>` : '';
+
+        // محتوى آخر رسالة (فارغ إن لم توجد دردشة)
+        const lastUserMsg = lastMsg ? escapeHtml(lastMsg.user_message || '') : '';
+        const lastBotMsg  = lastMsg ? escapeHtml(truncate(lastMsg.bot_response || '', 120)) : '';
+        const noMsgHtml   = '<span style="color:var(--dash-muted);font-size:0.78rem;">زيارة بدون دردشة</span>';
+
+        // استخراج اسم الجهاز الاحترافي من user_agent (تُخزَّن بصيغة "اسم الجهاز — UA")
+        const rawUa = c.user_agent || '';
+        const uaSep = rawUa.indexOf(' \u2014 ');
+        const deviceLabel = uaSep > -1 ? rawUa.slice(0, uaSep) : '';
+
+        // أيقونة الجهاز
+        const isMobile = c.device_type === 'Mobile';
+        const isTablet = c.device_type === 'Tablet';
+        const deviceIcon = isMobile
+          ? `<svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`
+          : isTablet
+          ? `<svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`
+          : `<svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
+
+        // وسام الشبكة الجزائرية
+        const ispBadge = c.isp ? getIspBadgeHtml(c.isp) : '';
+
+        // الموقع: لا نعرض قيماً فارغة
+        const locationStr = [c.city, c.region].filter(Boolean).join('، ');
+
+        return `
+          <tr>
+            <td class="cell-num" style="text-align:center; font-variant-numeric:tabular-nums; font-weight:700; color:var(--dash-muted); font-size:0.8rem;">${filtered.length - index}</td>
+            <td class="cell-time">
+              <span class="cell-time-rel">${relTime}</span>
+              <span>${dateStr} - ${timeStr}</span>
+            </td>
+            <td>${contactHtml}</td>
+            <td class="cell-msg">
+              <div style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.3rem;">${visitBadge}${msgBadgeHtml}</div>
+              ${lastMsg ? `<div class="cell-msg-user">${lastUserMsg}</div>` : noMsgHtml}
+            </td>
+            <td class="cell-msg">
+              <div class="cell-msg-bot">${lastBotMsg}</div>
+            </td>
+            <td>
+              <div class="cell-device">
+                <span class="device-badge">${deviceIcon} ${c.device_type || 'Desktop'}</span>
+                ${deviceLabel ? `<span style="font-size:0.75rem;font-weight:600;color:#0f172a;">${escapeHtml(deviceLabel)}</span>` : ''}
+                <span>${escapeHtml(c.os_name || '')}${c.browser_name ? ' &bull; ' + escapeHtml(c.browser_name) : ''}</span>
+                <span style="font-size:0.7rem; color:#94a3b8;">${c.screen_res || ''}</span>
+              </div>
+            </td>
+            <td>
+              <div class="cell-geo">
+                ${locationStr ? `<span class="geo-city"><svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${escapeHtml(locationStr)}</span>` : ''}
+                ${ispBadge}
+                ${c.connection_type ? `<span class="geo-isp" style="background:#f1f5f9;color:#475569;border-color:#cbd5e1;">${escapeHtml(c.connection_type)}</span>` : ''}
+                ${c.ip_address ? `<span class="geo-ip">IP: ${escapeHtml(c.ip_address)}</span>` : ''}
+              </div>
+            </td>
+            <td>
+              <span class="badge-section">${escapeHtml(c.current_section || 'hero')}</span>
+            </td>
+            <td>
+              ${c.messagesCount > 0 ? `<button class="btn-session-view" onclick="openSessionModal('${escapeHtml(c.session_id)}')"><svg class="icon icon-stroke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span>${c.messagesCount} ${c.messagesCount === 1 ? 'رسالة' : 'رسائل'}</span></button>` : '<span style="color:var(--dash-muted);font-size:0.78rem;">&mdash;</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 6. استعراض الجلسة الكاملة للشخص في نافذة منبثقة
+    window.openSessionModal = function (sessionId) {
+      if (!sessionId) return;
+      const conv = groupedConversations.find(c => c.session_id === sessionId);
+      if (!conv) return;
+
+      const modal = document.getElementById('sessionModalOverlay');
+      const container = document.getElementById('sessionModalMessages');
+      const title = document.getElementById('sessionModalTitle');
+      const sub = document.getElementById('sessionModalSub');
+      const footerInfo = document.getElementById('sessionModalFooterInfo');
+
+      const contactName = conv.user_name ? ` — ${conv.user_name}` : (conv.phone_number ? ` — ${conv.phone_number}` : '');
+      title.textContent = `محادثة المواطن${contactName} (${conv.messagesCount} رسائل)`;
+      sub.textContent = `${conv.city || 'الرحوية'} • ${conv.isp || 'الجزائر'} • ${conv.device_type} (${conv.os_name} - ${conv.browser_name})`;
+      footerInfo.textContent = `معرّف الجلسة: ${sessionId}`;
+
+      container.innerHTML = conv.messages.map(r => {
+        const time = new Date(r.created_at).toLocaleTimeString('ar-DZ', { hour: '2-digit', minute: '2-digit' });
+        let html = `
+          <div class="chat-bubble-thread user">
+            <div class="chat-bubble-thread-content">
+              ${escapeHtml(r.user_message || '')}
+            </div>
+            <span class="chat-bubble-thread-meta">المواطن • ${time}</span>
+          </div>
+        `;
+        if (r.bot_response) {
+          html += `
+            <div class="chat-bubble-thread assistant">
+              <div class="chat-bubble-thread-content">
+                ${escapeHtml(r.bot_response)}
+              </div>
+              <span class="chat-bubble-thread-meta" style="color:#0f172a; text-align:left;">رحوي • ${time}</span>
+            </div>
+          `;
+        }
+        return html;
+      }).join('');
+
+      modal.classList.add('active');
+    };
+
+    function closeSessionModal() {
+      const modal = document.getElementById('sessionModalOverlay');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // 7. تصدير إلى Excel/CSV (محادثة موحدة لكل شخص)
+    function exportToCSV() {
+      if (groupedConversations.length === 0) {
+        alert('لا توجد بيانات للتصدير حالياً.');
+        return;
+      }
+
+      const headers = ['تاريخ آخر تواصل', 'رقم الهاتف', 'الاسم', 'عدد الرسائل', 'آخر سؤال', 'آخر رد', 'نوع الجهاز', 'نظام التشغيل', 'المدينة', 'الولاية', 'شبكة الاتصال', 'IP', 'معرف الجلسة'];
+      const rows = groupedConversations.map(c => [
+        `"${new Date(c.created_at).toLocaleString('ar-DZ').replace(/"/g, '""')}"`,
+        `"${(c.phone_number || '').replace(/"/g, '""')}"`,
+        `"${(c.user_name || '').replace(/"/g, '""')}"`,
+        `"${c.messagesCount}"`,
+        `"${(c.latestMessage?.user_message || '').replace(/"/g, '""')}"`,
+        `"${(c.latestMessage?.bot_response || '').replace(/"/g, '""')}"`,
+        `"${(c.device_type || '').replace(/"/g, '""')}"`,
+        `"${(c.os_name || '').replace(/"/g, '""')}"`,
+        `"${(c.city || '').replace(/"/g, '""')}"`,
+        `"${(c.region || '').replace(/"/g, '""')}"`,
+        `"${(c.isp || '').replace(/"/g, '""')}"`,
+        `"${(c.ip_address || '').replace(/"/g, '""')}"`,
+        `"${(c.session_id || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `rahouia_campaign_chats_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // أدوات مساعدة
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function truncate(str, max) {
+      if (!str) return '';
+      return str.length > max ? str.slice(0, max) + '...' : str;
+    }
+
+    function getRelativeTime(date) {
+      const diffSec = Math.floor((new Date() - date) / 1000);
+      if (diffSec < 60) return 'الآن';
+      if (diffSec < 3600) return `منذ ${Math.floor(diffSec / 60)} دقيقة`;
+      if (diffSec < 86400) return `منذ ${Math.floor(diffSec / 3600)} ساعة`;
+      return `منذ ${Math.floor(diffSec / 86400)} يوم`;
+    }
+
+    // بدء التحميل
+    document.addEventListener('DOMContentLoaded', function () {
+      // ربط أزرار المودال
+      const modalClose = document.getElementById('sessionModalClose');
+      if (modalClose) modalClose.addEventListener('click', closeSessionModal);
+      const modalCloseBtn = document.getElementById('sessionModalCloseBtn');
+      if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeSessionModal);
+      const modalOverlay = document.getElementById('sessionModalOverlay');
+      if (modalOverlay) modalOverlay.addEventListener('click', function (e) {
+        if (e.target === this) closeSessionModal();
+      });
+
+      // ربط أحداث الواجهة بعد اكتمال DOM
+      const btnExport = document.getElementById('btnExportCsv');
+      if (btnExport) btnExport.addEventListener('click', exportToCSV);
+
+      const searchInput = document.getElementById('dashSearchInput');
+      if (searchInput) searchInput.addEventListener('input', function (e) {
+        searchQuery = e.target.value;
+        renderTable();
+      });
+
+      document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.dash-tab-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentFilter = this.getAttribute('data-filter');
+          renderTable();
+        });
+      });
+
+      const btnRefresh = document.getElementById('btnRefresh');
+      if (btnRefresh) btnRefresh.addEventListener('click', fetchChatsData);
+
+      // تحديث دوري كل 20 ثانية
+      setInterval(fetchChatsData, 20000);
+
+      // بدء التحميل الأولي
+      fetchChatsData();
+    });
+  </script>
+</body>
+
+</html>
